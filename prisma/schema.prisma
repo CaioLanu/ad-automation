@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum SystemRole {
+  ADMIN
+  USER
+}
+
+model SystemUser {
+  id           String     @id @default(uuid()) @db.Char(36)
+  email        String     @unique @db.VarChar(320)
+  name         String     @db.VarChar(255)
+  passwordHash String     @map("password_hash") @db.VarChar(255)
+  role         SystemRole @default(USER)
+  isActive     Boolean    @default(true) @map("is_active")
+  sessions     Session[]
+  auditLogs    AuditLog[]
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("system_users")
+}
+
+model Session {
+  id               String     @id @default(uuid()) @db.Char(36)
+  userId           String     @map("user_id") @db.Char(36)
+  user             SystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String     @unique @map("refresh_token_hash") @db.VarChar(255)
+  expiresAt        DateTime   @map("expires_at")
+  revokedAt        DateTime?  @map("revoked_at")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@map("sessions")
+}
+
+model AdUser {
+  id        String        @id @default(uuid()) @db.Char(36)
+  adId      String        @unique @map("ad_id") @db.VarChar(128)
+  rg        String        @unique @db.VarChar(64)
+  name      String        @db.VarChar(255)
+  isActive  Boolean       @default(true) @map("is_active")
+  groups    AdUserGroup[]
+  auditLogs AuditLog[]
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@index([isActive])
+  @@map("ad_users")
+}
+
+model AdGroup {
+  id        String        @id @default(uuid()) @db.Char(36)
+  name      String        @unique @db.VarChar(255)
+  users     AdUserGroup[]
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@map("ad_groups")
+}
+
+model AdUserGroup {
+  adUserId  String  @map("ad_user_id") @db.Char(36)
+  adGroupId String  @map("ad_group_id") @db.Char(36)
+  adUser    AdUser  @relation(fields: [adUserId], references: [id], onDelete: Cascade)
+  adGroup   AdGroup @relation(fields: [adGroupId], references: [id], onDelete: Restrict)
+
+  @@id([adUserId, adGroupId])
+  @@index([adGroupId])
+  @@map("ad_user_groups")
+}
+
+model AuditLog {
+  id          String      @id @default(uuid()) @db.Char(36)
+  actorUserId String?     @map("actor_user_id") @db.Char(36)
+  actorUser   SystemUser? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  adUserId    String?     @map("ad_user_id") @db.Char(36)
+  adUser      AdUser?     @relation(fields: [adUserId], references: [id], onDelete: SetNull)
+  action      String      @db.VarChar(128)
+  entityType  String      @map("entity_type") @db.VarChar(128)
+  entityId    String?     @map("entity_id") @db.VarChar(128)
+  metadata    Json?
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  @@index([actorUserId])
+  @@index([adUserId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@map("audit_logs")
+}

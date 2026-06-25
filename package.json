@@ -1,0 +1,21 @@
+{
+  "name": "ad-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:up": "docker compose up -d mysql",
+    "db:down": "docker compose down"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.1.0",
+    "typescript": "^5.7.0",
+    "@types/bun": "^1.1.14"
+  }
+}
