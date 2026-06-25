@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 28% 12%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 0 0% 100%;
+    --surface-subtle: 210 20% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 12%;
+    --primary: 216 82% 34%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 28% 12%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 14% 36%;
+    --accent: 216 82% 34%;
+    --accent-foreground: 0 0% 100%;
+    --success: 146 60% 28%;
+    --success-foreground: 0 0% 100%;
+    --warning: 35 78% 40%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 74% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 24% 84%;
+    --input: 214 24% 84%;
+    --ring: 216 82% 34%;
+  }
+
+  html[data-theme='dark'] {
+    --background: 222 36% 8%;
+    --foreground: 210 40% 98%;
+    --surface: 222 30% 11%;
+    --surface-elevated: 222 28% 14%;
+    --surface-subtle: 222 24% 16%;
+    --card: 222 30% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 30% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 214 100% 72%;
+    --primary-foreground: 222 36% 8%;
+    --secondary: 222 24% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 22% 18%;
+    --muted-foreground: 214 20% 78%;
+    --accent: 214 100% 72%;
+    --accent-foreground: 222 36% 8%;
+    --success: 146 52% 58%;
+    --success-foreground: 222 36% 8%;
+    --warning: 37 92% 62%;
+    --warning-foreground: 222 36% 8%;
+    --destructive: 0 84% 66%;
+    --destructive-foreground: 222 36% 8%;
+    --border: 222 18% 28%;
+    --input: 222 18% 28%;
+    --ring: 214 100% 72%;
+  }
+
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  html[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply min-h-screen overflow-x-hidden bg-background font-body text-foreground antialiased;
+    background-color: hsl(var(--background));
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.24);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer base {
+  html[data-theme='dark'] .bg-white {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  html[data-theme='dark'] .bg-slate-50,
+  html[data-theme='dark'] .bg-slate-100,
+  html[data-theme='dark'] .bg-blue-50,
+  html[data-theme='dark'] .bg-emerald-50,
+  html[data-theme='dark'] .bg-amber-50,
+  html[data-theme='dark'] .bg-red-50 {
+    background-color: hsl(var(--surface)) !important;
+  }
+
+  html[data-theme='dark'] .bg-slate-950,
+  html[data-theme='dark'] .bg-slate-900 {
+    background-color: hsl(var(--surface)) !important;
+  }
+
+  html[data-theme='dark'] .text-slate-900,
+  html[data-theme='dark'] .text-slate-800,
+  html[data-theme='dark'] .text-slate-700,
+  html[data-theme='dark'] .text-slate-600,
+  html[data-theme='dark'] .text-slate-500,
+  html[data-theme='dark'] .text-slate-300,
+  html[data-theme='dark'] .text-slate-200,
+  html[data-theme='dark'] .text-slate-100 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  html[data-theme='dark'] .text-blue-800,
+  html[data-theme='dark'] .text-blue-700,
+  html[data-theme='dark'] .text-emerald-700,
+  html[data-theme='dark'] .text-amber-800,
+  html[data-theme='dark'] .text-amber-700,
+  html[data-theme='dark'] .text-red-700,
+  html[data-theme='dark'] .text-red-600 {
+    color: hsl(var(--primary)) !important;
+  }
+
+  html[data-theme='dark'] .border-slate-800,
+  html[data-theme='dark'] .border-slate-700,
+  html[data-theme='dark'] .border-slate-200,
+  html[data-theme='dark'] .border-slate-100,
+  html[data-theme='dark'] .border-blue-100,
+  html[data-theme='dark'] .border-blue-200,
+  html[data-theme='dark'] .border-emerald-200,
+  html[data-theme='dark'] .border-amber-200,
+  html[data-theme='dark'] .border-red-200 {
+    border-color: hsl(var(--border)) !important;
+  }
+
+  html[data-theme='dark'] .hover\:bg-blue-50:hover,
+  html[data-theme='dark'] .hover\:bg-slate-50:hover,
+  html[data-theme='dark'] .hover\:bg-slate-100:hover {
+    background-color: hsl(var(--surface-subtle)) !important;
+  }
+
+  html[data-theme='dark'] .odd\:bg-slate-50\/70:nth-child(odd) {
+    background-color: hsl(var(--surface)) !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .flat-panel {
+    @apply relative overflow-hidden border border-border bg-card shadow-sm;
+  }
+
+  .flat-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .flat-ring {
+    @apply ring-1 ring-border;
+    box-shadow: 0 16px 40px -28px hsl(222 47% 11% / 0.45);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

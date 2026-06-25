@@ -13,7 +13,7 @@ bun run db:studio
 bun run db:down
 ```
 
-Copy `.env.example` to `.env` before running Prisma commands.
+Copy `backend/.env.example` to `.env` before running Prisma commands.
 
 ## Security and data invariants
 

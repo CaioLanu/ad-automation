@@ -3,27 +3,41 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-enum SystemRole {
-  ADMIN
-  USER
+enum SystemPermission {
+  ADMINISTRATORS @map("administrators")
+  DESENVOLVIMENTO
+}
+
+enum SeiTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+  INVALID
+}
+
+enum SeiTaskAction {
+  CREATE
+  UPDATE
 }
 
 model SystemUser {
   id           String     @id @default(uuid()) @db.Char(36)
-  email        String     @unique @db.VarChar(320)
+  rg           String     @unique @db.VarChar(64)
   name         String     @db.VarChar(255)
   passwordHash String     @map("password_hash") @db.VarChar(255)
-  role         SystemRole @default(USER)
+  permission   SystemPermission
   isActive     Boolean    @default(true) @map("is_active")
   sessions     Session[]
   auditLogs    AuditLog[]
+  seiImportBatches SeiImportBatch[]
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
-
   @@map("system_users")
 }
 
@@ -36,7 +50,6 @@ model Session {
   revokedAt        DateTime?  @map("revoked_at")
   createdAt        DateTime   @default(now()) @map("created_at")
   updatedAt        DateTime   @updatedAt @map("updated_at")
-
   @@index([userId])
   @@index([expiresAt])
   @@index([revokedAt])
@@ -53,7 +66,6 @@ model AdUser {
   auditLogs AuditLog[]
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
-
   @@index([name])
   @@index([isActive])
   @@map("ad_users")
@@ -65,7 +77,6 @@ model AdGroup {
   users     AdUserGroup[]
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
-
   @@map("ad_groups")
 }
 
@@ -74,7 +85,6 @@ model AdUserGroup {
   adGroupId String  @map("ad_group_id") @db.Char(36)
   adUser    AdUser  @relation(fields: [adUserId], references: [id], onDelete: Cascade)
   adGroup   AdGroup @relation(fields: [adGroupId], references: [id], onDelete: Restrict)
-
   @@id([adUserId, adGroupId])
   @@index([adGroupId])
   @@map("ad_user_groups")
@@ -91,10 +101,53 @@ model AuditLog {
   entityId    String?     @map("entity_id") @db.VarChar(128)
   metadata    Json?
   createdAt   DateTime    @default(now()) @map("created_at")
-
   @@index([actorUserId])
   @@index([adUserId])
   @@index([entityType, entityId])
   @@index([action])
   @@map("audit_logs")
+}
+
+model SeiImportBatch {
+  id           String    @id @default(uuid()) @db.Char(36)
+  fileName     String    @map("file_name") @db.VarChar(255)
+  totalRows    Int       @map("total_rows")
+  importedRows Int       @map("imported_rows")
+  invalidRows  Int       @map("invalid_rows")
+  actorUserId  String?   @map("actor_user_id") @db.Char(36)
+  actorUser    SystemUser? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  tasks        SeiTask[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@index([actorUserId])
+  @@index([createdAt])
+  @@map("sei_import_batches")
+}
+
+model SeiTask {
+  id               String         @id @default(uuid()) @db.Char(36)
+  batchId          String?        @map("batch_id") @db.Char(36)
+  batch            SeiImportBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  sector           String         @db.VarChar(255)
+  name             String         @db.VarChar(255)
+  rgLogin          String         @map("rg_login") @db.VarChar(64)
+  functionalId     String?        @map("functional_id") @db.VarChar(64)
+  cpf              String?        @db.VarChar(32)
+  role             String?        @db.VarChar(128)
+  personalEmail    String?        @map("personal_email") @db.VarChar(255)
+  personalPhone    String?        @map("personal_phone") @db.VarChar(64)
+  profile          String         @db.VarChar(64)
+  action           SeiTaskAction  @default(CREATE)
+  status           SeiTaskStatus  @default(PENDING)
+  validationErrors Json?          @map("validation_errors")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@index([rgLogin])
+  @@index([cpf])
+  @@index([status])
+  @@index([action])
+  @@index([sector])
+  @@map("sei_tasks")
 }

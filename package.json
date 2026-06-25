@@ -3,19 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
+    "dev": "bun run --cwd backend dev",
+    "dev:backend": "bun run --cwd backend dev",
+    "dev:frontend": "bun run --cwd frontend dev",
+    "build:backend": "bun run --cwd backend build",
+    "build:frontend": "bun run --cwd frontend build",
+    "typecheck:backend": "bun run --cwd backend typecheck",
+    "typecheck:frontend": "bun run --cwd frontend typecheck",
+    "db:generate": "bun run --cwd backend db:generate",
+    "db:migrate": "bun run --cwd backend db:migrate",
+    "db:studio": "bun run --cwd backend db:studio",
     "db:up": "docker compose up -d mysql",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "seed:admin": "bun run --cwd backend seed:admin"
   },
-  "dependencies": {
-    "@prisma/client": "^6.1.0"
-  },
-  "devDependencies": {
-    "prisma": "^6.1.0",
-    "typescript": "^5.7.0",
-    "@types/bun": "^1.1.14"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
