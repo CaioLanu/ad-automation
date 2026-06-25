@@ -77,14 +77,14 @@ export const LoginScreen = ({ loading, error, onSubmit, theme, onToggleTheme }: 
                 ))}
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-3">
                 {trustSignals.map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="rounded-lg border border-border bg-background p-4 shadow-sm">
+                  <div key={label} className="min-w-0 rounded-lg border border-border bg-background p-4 shadow-sm">
                     <div className="flex h-11 w-11 items-center justify-center rounded-md border border-border bg-primary/10 text-primary">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</div>
-                    <div className="mt-1 font-display text-xl font-semibold text-foreground">{value}</div>
+                    <div className="mt-1 break-words font-display text-base font-semibold leading-snug text-foreground sm:text-lg xl:text-xl">{value}</div>
                   </div>
                 ))}
               </div>
