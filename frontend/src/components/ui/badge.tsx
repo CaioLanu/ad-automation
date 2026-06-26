@@ -9,8 +9,8 @@ const styles: Record<BadgeVariant, string> = {
   outline: 'bg-background text-foreground border border-border',
   destructive: 'bg-destructive/10 text-destructive border border-destructive/20',
   brand: 'bg-primary text-primary-foreground border border-primary',
-  success: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
-  warning: 'bg-amber-100 text-amber-900 border border-amber-200',
+  success: 'bg-success/15 text-success border border-success/20',
+  warning: 'bg-warning/15 text-warning border border-warning/20',
 };
 
 export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {

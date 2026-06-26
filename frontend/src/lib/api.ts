@@ -4,6 +4,33 @@ type LoginResponse = {
   sessionId?: string;
 };
 
+export type AdUser = {
+  id: string;
+  adId: string;
+  rg: string;
+  name: string;
+  isActive: boolean;
+  memberOf: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateAdUserInput = {
+  rg: string;
+  name: string;
+  adId: string;
+  isActive?: boolean;
+  memberOf: string[];
+};
+
+export type UpdateAdUserInput = {
+  rg?: string;
+  name?: string;
+  adId?: string;
+  isActive?: boolean;
+  memberOf?: string[];
+};
+
 export type SeiTaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' | 'INVALID';
 export type SeiTaskAction = 'CREATE' | 'UPDATE';
 
@@ -162,4 +189,30 @@ export const importSeiTasksXlsx = (accessToken: string, file: File) =>
       'x-file-name': file.name,
     }),
     body: file,
+  });
+
+export const listAdUsers = (accessToken: string) =>
+  request<AdUser[]>('/ad/users', {
+    method: 'GET',
+    headers: authHeaders(accessToken),
+  });
+
+export const createAdUser = (accessToken: string, user: CreateAdUserInput) =>
+  request<AdUser>('/ad/users', {
+    method: 'POST',
+    headers: authHeaders(accessToken),
+    body: JSON.stringify(user),
+  });
+
+export const updateAdUser = (accessToken: string, id: string, user: UpdateAdUserInput) =>
+  request<AdUser>(`/ad/users/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: authHeaders(accessToken),
+    body: JSON.stringify(user),
+  });
+
+export const deactivateAdUser = (accessToken: string, id: string) =>
+  request<AdUser>(`/ad/users/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    headers: authHeaders(accessToken),
   });
