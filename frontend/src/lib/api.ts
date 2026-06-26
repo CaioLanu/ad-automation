@@ -77,12 +77,66 @@ export type SeiTaskImportSummary = {
   tasks: SeiTask[];
 };
 
+export type SeiTaskAdCheckResult = {
+  exists: boolean;
+  matchedBy: 'rgLogin' | 'adId' | 'cpf' | null;
+  checkedAt: string;
+  message: string;
+  user: AdUser | null;
+};
+
 export type SeiTaskFilters = {
   search?: string;
   status?: SeiTaskStatus | '';
   action?: SeiTaskAction | '';
   sector?: string;
   profile?: string;
+};
+
+export type AdUser = {
+  id: string;
+  adId: string;
+  rg: string;
+  rgLogin: string;
+  name: string;
+  sector: string | null;
+  functionalId: string | null;
+  cpf: string | null;
+  role: string | null;
+  personalEmail: string | null;
+  personalPhone: string | null;
+  profile: string | null;
+  isActive: boolean;
+  memberOf: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdUserCreateInput = {
+  sector: string;
+  name: string;
+  rgLogin: string;
+  functionalId?: string | null;
+  cpf?: string | null;
+  role?: string | null;
+  personalEmail?: string | null;
+  personalPhone?: string | null;
+  profile: string;
+  isActive?: boolean;
+  adId?: string | null;
+  memberOf?: string[];
+};
+
+export type AdUserUpdateInput = Partial<AdUserCreateInput>;
+
+export type AdUserImportSummary = {
+  batchId: string;
+  fileName: string;
+  totalRows: number;
+  importedRows: number;
+  invalidRows: number;
+  users: AdUser[];
+  errors: Array<{ rowNumber: number; message: string; fields: string[] }>;
 };
 
 const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
@@ -181,6 +235,12 @@ export const updateSeiTask = (accessToken: string, id: string, task: SeiTaskUpse
     body: JSON.stringify(task),
   });
 
+export const checkSeiTaskInAd = (accessToken: string, id: string) =>
+  request<SeiTaskAdCheckResult>(`/sei/tasks/${encodeURIComponent(id)}/check-ad`, {
+    method: 'POST',
+    headers: authHeaders(accessToken),
+  });
+
 export const importSeiTasksXlsx = (accessToken: string, file: File) =>
   request<SeiTaskImportSummary>('/sei/tasks/import', {
     method: 'POST',
@@ -197,14 +257,22 @@ export const listAdUsers = (accessToken: string) =>
     headers: authHeaders(accessToken),
   });
 
+<<<<<<< HEAD
 export const createAdUser = (accessToken: string, user: CreateAdUserInput) =>
+=======
+export const createAdUser = (accessToken: string, user: AdUserCreateInput) =>
+>>>>>>> b8238c6 (Alterações no frontend, estruturação do dashboard de importação dos usuários.)
   request<AdUser>('/ad/users', {
     method: 'POST',
     headers: authHeaders(accessToken),
     body: JSON.stringify(user),
   });
 
+<<<<<<< HEAD
 export const updateAdUser = (accessToken: string, id: string, user: UpdateAdUserInput) =>
+=======
+export const updateAdUser = (accessToken: string, id: string, user: AdUserUpdateInput) =>
+>>>>>>> b8238c6 (Alterações no frontend, estruturação do dashboard de importação dos usuários.)
   request<AdUser>(`/ad/users/${encodeURIComponent(id)}`, {
     method: 'PATCH',
     headers: authHeaders(accessToken),
@@ -216,3 +284,16 @@ export const deactivateAdUser = (accessToken: string, id: string) =>
     method: 'DELETE',
     headers: authHeaders(accessToken),
   });
+<<<<<<< HEAD
+=======
+
+export const importAdUsersXlsx = (accessToken: string, file: File) =>
+  request<AdUserImportSummary>('/ad/users/import', {
+    method: 'POST',
+    headers: authHeaders(accessToken, {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'x-file-name': file.name,
+    }),
+    body: file,
+  });
+>>>>>>> b8238c6 (Alterações no frontend, estruturação do dashboard de importação dos usuários.)

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { prisma } from '../infrastructure/prisma/client.js';
+import { prisma } from '../Repository/prisma-client.js';
 
 const seedAdminSchema = z.object({
   ADMIN_RG: z.string().trim().min(1),

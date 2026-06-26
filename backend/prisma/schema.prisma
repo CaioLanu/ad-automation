@@ -57,17 +57,27 @@ model Session {
 }
 
 model AdUser {
-  id        String        @id @default(uuid()) @db.Char(36)
-  adId      String        @unique @map("ad_id") @db.VarChar(128)
-  rg        String        @unique @db.VarChar(64)
-  name      String        @db.VarChar(255)
-  isActive  Boolean       @default(true) @map("is_active")
-  groups    AdUserGroup[]
-  auditLogs AuditLog[]
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt @map("updated_at")
+  id            String        @id @default(uuid()) @db.Char(36)
+  adId          String        @unique @map("ad_id") @db.VarChar(128)
+  rg            String        @unique @db.VarChar(64)
+  name          String        @db.VarChar(255)
+  sector        String?       @db.VarChar(255)
+  functionalId  String?       @map("functional_id") @db.VarChar(64)
+  cpf           String?       @db.VarChar(32)
+  role          String?       @db.VarChar(128)
+  personalEmail String?       @map("personal_email") @db.VarChar(255)
+  personalPhone String?       @map("personal_phone") @db.VarChar(64)
+  profile       String?       @db.VarChar(64)
+  isActive      Boolean       @default(true) @map("is_active")
+  groups        AdUserGroup[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
   @@index([name])
   @@index([isActive])
+  @@index([cpf])
+  @@index([sector])
+  @@index([profile])
   @@map("ad_users")
 }
 

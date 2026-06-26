@@ -19,10 +19,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Input } from '../ui/input';
 import {
   ApiError,
+  checkSeiTaskInAd,
   createSeiTask,
   importSeiTasksXlsx,
   listSeiTasks,
   type SeiTask,
+  type SeiTaskAdCheckResult,
   type SeiTaskAction,
   type SeiTaskFilters,
   type SeiTaskImportSummary,
@@ -56,9 +58,22 @@ const STATUS_OPTIONS: Array<{ value: SeiTaskStatus; label: string }> = [
 ];
 
 const ACTION_OPTIONS: Array<{ value: SeiTaskAction; label: string }> = [
-  { value: 'CREATE', label: 'Criar' },
+  { value: 'CREATE', label: 'Enviar para AD' },
   { value: 'UPDATE', label: 'Atualizar' },
 ];
+
+const statusLabels: Record<SeiTaskStatus, string> = {
+  PENDING: 'Pendente',
+  IN_PROGRESS: 'Em andamento',
+  COMPLETED: 'Concluído',
+  CANCELED: 'Cancelado',
+  INVALID: 'Inválido',
+};
+
+const actionLabels: Record<SeiTaskAction, string> = {
+  CREATE: 'Enviar para AD',
+  UPDATE: 'Atualizar',
+};
 
 const emptyDraft = (): SeiTaskDraft => ({
   sector: '',
@@ -165,6 +180,8 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [importSummary, setImportSummary] = useState<SeiTaskImportSummary | null>(null);
+  const [checkingTaskId, setCheckingTaskId] = useState<string | null>(null);
+  const [adCheckResults, setAdCheckResults] = useState<Record<string, SeiTaskAdCheckResult>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const selectedTaskIdRef = useRef<string | null>(null);
 
@@ -195,7 +212,7 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
         }
       }
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Não foi possível carregar a fila SEI.');
+      setError(err instanceof ApiError ? err.message : 'Não foi possível carregar a fila de usuários.');
     } finally {
       setLoading(false);
     }
@@ -257,6 +274,22 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
     }
   };
 
+  const handleCheckAdUser = async (task: SeiTask) => {
+    setCheckingTaskId(task.id);
+    setNotice(null);
+    setError(null);
+
+    try {
+      const result = await checkSeiTaskInAd(session.accessToken, task.id);
+      setAdCheckResults((current) => ({ ...current, [task.id]: result }));
+      setNotice(result.message);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Não foi possível verificar o usuário no Active Directory.');
+    } finally {
+      setCheckingTaskId(null);
+    }
+  };
+
   const handleImport = async () => {
     if (!selectedFile) {
       setError('Escolha um arquivo XLSX antes de importar.');
@@ -302,17 +335,17 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
     void handleSave();
   };
 
-  const taskCountLabel = tasks.length === 1 ? '1 tarefa' : `${tasks.length} tarefas`;
+  const taskCountLabel = tasks.length === 1 ? '1 usuário' : `${tasks.length} usuários`;
 
   return (
-    <section id="sei" className="scroll-mt-6 space-y-4">
+    <section id="active-directory" className="scroll-mt-6 space-y-4">
       <Card variant="elevated">
         <CardHeader>
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="space-y-2">
-              <Badge variant="brand" className="w-fit">SEI xlsx import</Badge>
-              <CardTitle>Fila de tarefas SEI</CardTitle>
-              <CardDescription>Importe planilhas, filtre registros e ajuste manualmente as linhas antes do consumo no backend.</CardDescription>
+              <Badge variant="brand" className="w-fit">AD xlsx import</Badge>
+              <CardTitle>Fila de usuários importados</CardTitle>
+              <CardDescription>Importe planilhas, filtre registros e ajuste manualmente as linhas antes do envio para o Active Directory.</CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary"><ArrowDownUp className="h-3.5 w-3.5" />{taskCountLabel}</Badge>
@@ -328,7 +361,8 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
           {notice ? <Alert variant="success" title="Tudo certo" description={notice} /> : null}
 
           <div className="grid gap-4 xl:grid-cols-[1.25fr_0.75fr]">
-            <Card variant="panel" className="min-h-0">
+            <div className="space-y-4">
+              <Card variant="panel" className="min-h-0">
               <CardHeader className="pb-4">
                 <div className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,0.8fr))]">
                   <div className="relative">
@@ -350,8 +384,8 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
 
               <CardContent className="pt-0">
                 <div className="overflow-x-auto rounded-lg border border-border bg-background">
-                  <table className="w-full min-w-[58rem] border-collapse text-left text-sm">
-                    <caption className="sr-only">Tarefas SEI importadas ou criadas manualmente</caption>
+                  <table className="w-full min-w-[70rem] border-collapse text-left text-sm">
+                    <caption className="sr-only">Usuários importados ou criados manualmente</caption>
                     <thead className="border-b border-border bg-muted text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
                       <tr>
                         <th scope="col" className="px-4 py-3 font-bold">Nome</th>
@@ -360,52 +394,108 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                         <th scope="col" className="px-4 py-3 font-bold">Perfil</th>
                         <th scope="col" className="px-4 py-3 font-bold">Status</th>
                         <th scope="col" className="px-4 py-3 font-bold">Ação</th>
+                        <th scope="col" className="px-4 py-3 font-bold">Active Directory</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/60">
                       {loading ? (
                         <tr>
-                          <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                          <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                             <div className="inline-flex items-center gap-2">
-                              <Loader2 className="h-4 w-4 animate-spin" />Carregando tarefas…
+                              <Loader2 className="h-4 w-4 animate-spin" />Carregando usuários…
                             </div>
                           </td>
                         </tr>
                       ) : tasks.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Nenhuma tarefa encontrada.</td>
+                          <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Nenhum usuário encontrado.</td>
                         </tr>
-                      ) : tasks.map((task) => (
-                        <tr
-                          key={task.id}
-                          onClick={() => handlePickTask(task)}
-                          className={cn(
-                            'cursor-pointer transition-colors odd:bg-muted/50 hover:bg-muted',
-                            selectedTaskId === task.id && 'bg-muted ring-1 ring-inset ring-border',
-                          )}
-                        >
-                          <td className="px-4 py-4 align-top">
-                            <div className="font-medium text-foreground">{displayValue(task.name)}</div>
-                            <div className="mt-1 text-xs text-muted-foreground">ID {displayValue(task.id)}</div>
-                          </td>
-                          <td className="px-4 py-4 align-top font-mono text-foreground tabular">{displayValue(task.rgLogin)}</td>
-                          <td className="px-4 py-4 align-top text-foreground">{displayValue(task.sector)}</td>
-                          <td className="px-4 py-4 align-top text-foreground">{displayValue(task.profile)}</td>
-                          <td className="px-4 py-4 align-top"><Badge variant={taskBadges[task.status]}>{task.status}</Badge></td>
-                          <td className="px-4 py-4 align-top"><Badge variant={actionBadges[task.action]}>{task.action}</Badge></td>
-                        </tr>
-                      ))}
+                      ) : tasks.map((task) => {
+                        const adCheckResult = adCheckResults[task.id];
+                        const checking = checkingTaskId === task.id;
+
+                        return (
+                          <tr
+                            key={task.id}
+                            onClick={() => handlePickTask(task)}
+                            className={cn(
+                              'cursor-pointer transition-colors odd:bg-muted/50 hover:bg-muted',
+                              selectedTaskId === task.id && 'bg-muted ring-1 ring-inset ring-border',
+                            )}
+                          >
+                            <td className="px-4 py-4 align-top">
+                              <div className="font-medium text-foreground">{displayValue(task.name)}</div>
+                            </td>
+                            <td className="px-4 py-4 align-top font-mono text-foreground tabular">{displayValue(task.rgLogin)}</td>
+                            <td className="px-4 py-4 align-top text-foreground">{displayValue(task.sector)}</td>
+                            <td className="px-4 py-4 align-top text-foreground">{displayValue(task.profile)}</td>
+                            <td className="px-4 py-4 align-top"><Badge variant={taskBadges[task.status]}>{statusLabels[task.status]}</Badge></td>
+                            <td className="px-4 py-4 align-top"><Badge variant={actionBadges[task.action]}>{actionLabels[task.action]}</Badge></td>
+                            <td className="px-4 py-4 align-top">
+                              <div className="flex flex-wrap items-center gap-2">
+                                {adCheckResult ? (
+                                  <Badge variant={adCheckResult.exists ? 'success' : 'destructive'}>
+                                    {adCheckResult.exists ? 'Existe no AD' : 'Não encontrado'}
+                                  </Badge>
+                                ) : null}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={checking}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    void handleCheckAdUser(task);
+                                  }}
+                                >
+                                  {checking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                  Verificar no AD
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               </CardContent>
-            </Card>
+              </Card>
+
+              <Card variant="panel">
+                <CardHeader>
+                  <CardTitle>{selectedTaskId ? 'Editar registro' : 'Novo registro'}</CardTitle>
+                  <CardDescription>Preencha os campos do usuário importado e grave no backend autorizado.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Setor/Sigla</span><Input value={draft.sector} onChange={(event) => setDraft((current) => ({ ...current, sector: event.target.value }))} required /></label>
+                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Nome</span><Input value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} required /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">CPF/Login</span><Input value={draft.rgLogin} onChange={(event) => setDraft((current) => ({ ...current, rgLogin: event.target.value }))} required /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Id Func.</span><Input value={draft.functionalId} onChange={(event) => setDraft((current) => ({ ...current, functionalId: event.target.value }))} /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">CPF</span><Input value={draft.cpf} onChange={(event) => setDraft((current) => ({ ...current, cpf: event.target.value }))} /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Cargo</span><Input value={draft.role} onChange={(event) => setDraft((current) => ({ ...current, role: event.target.value }))} /></label>
+                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">E-mail institucional</span><Input type="email" value={draft.personalEmail} onChange={(event) => setDraft((current) => ({ ...current, personalEmail: event.target.value }))} placeholder="nome.sobrenome@orgao.gov.br" /></label>
+                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Celular</span><Input value={draft.personalPhone} onChange={(event) => setDraft((current) => ({ ...current, personalPhone: event.target.value }))} /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Perfil</span><Input value={draft.profile} onChange={(event) => setDraft((current) => ({ ...current, profile: event.target.value }))} required /></label>
+                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Status</span><select value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as SeiTaskStatus }))} className={fieldClass}>{STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Ação</span><select value={draft.action} onChange={(event) => setDraft((current) => ({ ...current, action: event.target.value as SeiTaskAction }))} className={fieldClass}>{ACTION_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+                    </div>
+
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <Button type="submit" disabled={saving} className="sm:flex-1">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}{selectedTaskId ? 'Salvar alterações' : 'Criar registro'}</Button>
+                      <Button type="button" variant="secondary" onClick={handleNewTask}>Limpar formulário</Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
 
             <div className="space-y-4">
               <Card variant="panel">
                 <CardHeader>
                   <CardTitle className="text-xl">Importar XLSX</CardTitle>
-                  <CardDescription>Envie o arquivo original da planilha para criar a fila SEI em lote.</CardDescription>
+                  <CardDescription>Envie o arquivo original da planilha para criar a fila de envio ao AD em lote.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div
@@ -478,7 +568,7 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                           <div key={task.id} className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm">
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <div className="font-semibold text-foreground">{task.name}</div>
-                              <Badge variant="destructive">{task.status}</Badge>
+                              <Badge variant="destructive">{statusLabels[task.status]}</Badge>
                             </div>
                             <div className="mt-2 text-muted-foreground">{displayValue(task.sector)} • {displayValue(task.rgLogin)}</div>
                             <ul className="mt-3 list-disc space-y-1 pl-5 text-destructive">
@@ -489,35 +579,6 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                       </div>
                     </div>
                   ) : null}
-                </CardContent>
-              </Card>
-
-              <Card variant="panel">
-                <CardHeader>
-                  <CardTitle>{selectedTaskId ? 'Editar tarefa' : 'Novo registro'}</CardTitle>
-                  <CardDescription>Preencha os campos da tarefa SEI e grave no backend autorizado.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Setor/Sigla</span><Input value={draft.sector} onChange={(event) => setDraft((current) => ({ ...current, sector: event.target.value }))} required /></label>
-                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Nome</span><Input value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} required /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">CPF/Login</span><Input value={draft.rgLogin} onChange={(event) => setDraft((current) => ({ ...current, rgLogin: event.target.value }))} required /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Id Func.</span><Input value={draft.functionalId} onChange={(event) => setDraft((current) => ({ ...current, functionalId: event.target.value }))} /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">CPF</span><Input value={draft.cpf} onChange={(event) => setDraft((current) => ({ ...current, cpf: event.target.value }))} /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Cargo</span><Input value={draft.role} onChange={(event) => setDraft((current) => ({ ...current, role: event.target.value }))} /></label>
-                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">E-mail institucional</span><Input type="email" value={draft.personalEmail} onChange={(event) => setDraft((current) => ({ ...current, personalEmail: event.target.value }))} placeholder="nome.sobrenome@orgao.gov.br" /></label>
-                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Celular</span><Input value={draft.personalPhone} onChange={(event) => setDraft((current) => ({ ...current, personalPhone: event.target.value }))} /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Perfil</span><Input value={draft.profile} onChange={(event) => setDraft((current) => ({ ...current, profile: event.target.value }))} required /></label>
-                      <label className="space-y-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Status</span><select value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as SeiTaskStatus }))} className={fieldClass}>{STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
-                      <label className="space-y-2 sm:col-span-2"><span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Ação</span><select value={draft.action} onChange={(event) => setDraft((current) => ({ ...current, action: event.target.value as SeiTaskAction }))} className={fieldClass}>{ACTION_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
-                    </div>
-
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <Button type="submit" disabled={saving} className="sm:flex-1">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}{selectedTaskId ? 'Salvar alterações' : 'Criar tarefa'}</Button>
-                      <Button type="button" variant="secondary" onClick={handleNewTask}>Limpar formulário</Button>
-                    </div>
-                  </form>
                 </CardContent>
               </Card>
 
