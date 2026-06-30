@@ -134,6 +134,26 @@ model SeiImportBatch {
   @@map("sei_import_batches")
 }
 
+model BiMovement {
+  id            String   @id @default(uuid()) @db.Char(36)
+  date          DateTime @db.Date
+  kind          String   @db.VarChar(32)
+  name          String   @db.VarChar(255)
+  functionalId  String   @map("functional_id") @db.VarChar(64)
+  sector        String   @db.VarChar(255)
+  role          String   @db.VarChar(128)
+  symbol        String   @db.VarChar(32)
+  sourceFile    String   @map("source_file") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([date, functionalId, kind])
+  @@index([date])
+  @@index([kind])
+  @@index([functionalId])
+  @@map("bi_movements")
+}
+
 model SeiTask {
   id               String         @id @default(uuid()) @db.Char(36)
   batchId          String?        @map("batch_id") @db.Char(36)
