@@ -51,11 +51,11 @@ export function DashboardPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="border-border/80 shadow-none lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
               <CardTitle className="text-base font-semibold">Usuários atualizados recentemente</CardTitle>
-              <Link to="/app/usuarios" className="hidden min-h-10 items-center rounded-md border border-border bg-background px-3 text-sm font-semibold text-foreground hover:bg-muted sm:inline-flex">
+              <Link to="/app/usuarios" className="hidden min-h-10 items-center rounded-full border border-white/40 bg-background/55 px-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur hover:bg-background/80 sm:inline-flex">
                 Gerenciar
               </Link>
             </div>
@@ -89,7 +89,7 @@ export function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/80 shadow-none">
+        <Card>
           <CardHeader>
             <CardTitle className="text-base font-semibold">Sessão administrativa</CardTitle>
           </CardHeader>

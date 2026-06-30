@@ -35,32 +35,32 @@
   }
 
   html[data-theme='dark'] {
-    --background: 222 36% 8%;
-    --foreground: 210 40% 98%;
-    --surface: 222 30% 11%;
-    --surface-elevated: 222 28% 14%;
-    --surface-subtle: 222 24% 16%;
-    --card: 222 30% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 30% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 214 100% 72%;
-    --primary-foreground: 222 36% 8%;
-    --secondary: 222 24% 18%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 22% 18%;
-    --muted-foreground: 214 20% 78%;
-    --accent: 214 100% 72%;
-    --accent-foreground: 222 36% 8%;
-    --success: 146 52% 58%;
-    --success-foreground: 222 36% 8%;
-    --warning: 37 92% 62%;
-    --warning-foreground: 222 36% 8%;
-    --destructive: 0 84% 66%;
-    --destructive-foreground: 222 36% 8%;
-    --border: 222 18% 28%;
-    --input: 222 18% 28%;
-    --ring: 214 100% 72%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 96%;
+    --surface: 217 33% 17%;
+    --surface-elevated: 215 25% 25%;
+    --surface-subtle: 215 25% 21%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 25%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 215 22% 20%;
+    --muted-foreground: 215 16% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 69% 52%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 217 91% 60%;
   }
 
   html {
@@ -79,6 +79,10 @@
   body {
     @apply min-h-screen overflow-x-hidden bg-background font-body text-foreground antialiased;
     background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(circle at top left, rgb(125 211 252 / 0.16), transparent 30%),
+      radial-gradient(circle at 85% 10%, rgb(59 130 246 / 0.12), transparent 28%),
+      linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
   }
 
   #root {
@@ -171,6 +175,78 @@
   .flat-ring {
     @apply ring-1 ring-border;
     box-shadow: 0 16px 40px -28px hsl(222 47% 11% / 0.45);
+  }
+
+  .glass-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(125 174 255 / 0.24);
+    background:
+      linear-gradient(145deg, hsl(var(--card) / 0.82), hsl(var(--background) / 0.48)),
+      radial-gradient(circle at 14% 0%, rgb(125 211 252 / 0.2), transparent 34%),
+      radial-gradient(circle at 100% 0%, rgb(59 130 246 / 0.14), transparent 30%);
+    box-shadow:
+      0 24px 72px -50px rgb(15 23 42 / 0.58),
+      inset 0 1px 0 rgb(255 255 255 / 0.78),
+      0 0 0 1px rgb(255 255 255 / 0.16);
+    backdrop-filter: blur(26px) saturate(175%);
+  }
+
+  .glass-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(125 174 255 / 0.2);
+    background:
+      linear-gradient(140deg, hsl(var(--card) / 0.74), hsl(var(--surface-subtle) / 0.4)),
+      radial-gradient(circle at top left, rgb(125 211 252 / 0.12), transparent 40%);
+    box-shadow: 0 18px 44px -34px rgb(15 23 42 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.64);
+    backdrop-filter: blur(20px) saturate(150%);
+  }
+
+  .glass-card > *,
+  .glass-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .glass-card::before,
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, rgb(255 255 255 / 0.38), transparent 32%, rgb(14 165 233 / 0.08));
+  }
+
+  html[data-theme='dark'] .glass-panel,
+  html[data-theme='dark'] .glass-card {
+    border-color: rgb(148 163 184 / 0.32);
+    background:
+      linear-gradient(145deg, hsl(var(--card) / 0.92), hsl(var(--background) / 0.72)),
+      radial-gradient(circle at top right, rgb(59 130 246 / 0.12), transparent 34%);
+    box-shadow:
+      0 22px 58px -44px rgb(0 0 0 / 0.6),
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+
+  html[data-theme='dark'] .glass-panel::before,
+  html[data-theme='dark'] .glass-card::before {
+    background: linear-gradient(115deg, rgb(255 255 255 / 0.04), transparent 32%, rgb(14 165 233 / 0.06));
+  }
+
+  .app-glass-shell {
+    background:
+      radial-gradient(circle at top left, rgb(125 211 252 / 0.18), transparent 26%),
+      radial-gradient(circle at 85% 0%, rgb(59 130 246 / 0.12), transparent 28%),
+      linear-gradient(135deg, #f7fbff 0%, #eef6fc 46%, #fbfdff 100%);
+  }
+
+  html[data-theme='dark'] .app-glass-shell {
+    background:
+      radial-gradient(circle at top left, rgb(14 165 233 / 0.14), transparent 28%),
+      radial-gradient(circle at 85% 0%, rgb(59 130 246 / 0.12), transparent 30%),
+      linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface)) 52%, hsl(var(--background)) 100%);
   }
 
   .tabular {

@@ -9,18 +9,18 @@ export type AlertProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const alertStyles = {
-  default: 'border-border bg-background text-foreground',
-  destructive: 'border-destructive/30 bg-destructive/10 text-destructive',
-  brand: 'border-primary/30 bg-primary/10 text-primary',
-  success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  warning: 'border-amber-200 bg-amber-50 text-amber-900',
+  default: 'border-white/35 bg-background/50 text-foreground backdrop-blur',
+  destructive: 'border-destructive/30 bg-destructive/10 text-destructive backdrop-blur',
+  brand: 'border-primary/30 bg-primary/10 text-primary backdrop-blur',
+  success: 'border-emerald-300/40 bg-emerald-500/10 text-emerald-800 backdrop-blur dark:text-emerald-200',
+  warning: 'border-amber-300/40 bg-amber-500/10 text-amber-900 backdrop-blur dark:text-amber-200',
 } as const;
 
 export const Alert = ({ className, title, description, variant = 'default', children, ...props }: AlertProps) => (
   <div
     role="alert"
     className={cn(
-      'rounded-lg border px-4 py-4 shadow-sm',
+      'rounded-2xl border px-4 py-4 shadow-sm',
       alertStyles[variant as keyof typeof alertStyles],
       className,
     )}

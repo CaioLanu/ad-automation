@@ -138,7 +138,7 @@ const formatDateTime = (value: string) => {
 };
 
 const fieldClass =
-  'min-h-11 w-full rounded-md border border-input bg-background px-4 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+  'min-h-11 w-full rounded-xl border border-white/40 bg-background/55 px-4 py-2 text-sm text-foreground shadow-sm backdrop-blur transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
 
 const displayValue = (value?: string | null) => value?.trim() || '—';
 
@@ -383,10 +383,10 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
               </CardHeader>
 
               <CardContent className="pt-0">
-                <div className="overflow-x-auto rounded-lg border border-border bg-background">
+                <div className="overflow-x-auto rounded-2xl border border-white/35 bg-background/35 backdrop-blur">
                   <table className="w-full min-w-[70rem] border-collapse text-left text-sm">
                     <caption className="sr-only">Usuários importados ou criados manualmente</caption>
-                    <thead className="border-b border-border bg-muted text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                    <thead className="border-b border-white/35 bg-background/55 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
                       <tr>
                         <th scope="col" className="px-4 py-3 font-bold">Nome</th>
                         <th scope="col" className="px-4 py-3 font-bold">CPF/Login</th>
@@ -419,8 +419,8 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                             key={task.id}
                             onClick={() => handlePickTask(task)}
                             className={cn(
-                              'cursor-pointer transition-colors odd:bg-muted/50 hover:bg-muted',
-                              selectedTaskId === task.id && 'bg-muted ring-1 ring-inset ring-border',
+                              'cursor-pointer transition-colors odd:bg-background/25 hover:bg-background/55',
+                              selectedTaskId === task.id && 'bg-background/65 ring-1 ring-inset ring-white/45',
                             )}
                           >
                             <td className="px-4 py-4 align-top">
@@ -504,11 +504,11 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                     onDragOver={(event) => { event.preventDefault(); setDragActive(true); }}
                     onDrop={handleDrop}
                     className={cn(
-                      'rounded-lg border border-dashed p-5 text-center transition-colors',
-                      dragActive ? 'border-primary bg-primary/10' : 'border-border bg-muted',
+                      'rounded-2xl border border-dashed p-5 text-center transition-colors backdrop-blur',
+                      dragActive ? 'border-primary bg-primary/10' : 'border-white/40 bg-background/45',
                     )}
                   >
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md border border-border bg-background text-primary">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-white/40 bg-background/55 text-primary">
                       <FileSpreadsheet className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div className="mt-4 space-y-1">
@@ -531,7 +531,7 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                     />
                   </div>
 
-                  <div className="rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground shadow-sm">
+                  <div className="glass-card rounded-2xl p-4 text-sm text-muted-foreground">
                     <div className="flex items-start gap-3">
                       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-current/15 bg-current/10 text-current">
                         <AlertCircle className="h-4 w-4" />
@@ -544,7 +544,7 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                   </div>
 
                   {importSummary ? (
-                    <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/10 p-4">
+                    <div className="space-y-3 rounded-2xl border border-primary/20 bg-primary/10 p-4 backdrop-blur">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
                           <div className="font-semibold text-foreground">Resumo da importação</div>
@@ -553,9 +553,9 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                         <Badge variant="brand">{importSummary.fileName}</Badge>
                       </div>
                       <div className="grid gap-3 sm:grid-cols-3">
-                        <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Linhas</div><div className="mt-1 text-lg font-semibold text-foreground">{importSummary.totalRows}</div></div>
-                        <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Importadas</div><div className="mt-1 text-lg font-semibold text-emerald-700">{importSummary.importedRows}</div></div>
-                        <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Inválidas</div><div className="mt-1 text-lg font-semibold text-amber-700">{importSummary.invalidRows}</div></div>
+                        <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Linhas</div><div className="mt-1 text-lg font-semibold text-foreground">{importSummary.totalRows}</div></div>
+                        <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Importadas</div><div className="mt-1 text-lg font-semibold text-emerald-700">{importSummary.importedRows}</div></div>
+                        <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Inválidas</div><div className="mt-1 text-lg font-semibold text-amber-700">{importSummary.invalidRows}</div></div>
                       </div>
                     </div>
                   ) : null}
@@ -565,7 +565,7 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                       <div className="text-sm font-semibold text-foreground">Erros de validação</div>
                       <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
                         {invalidTasks.map((task) => (
-                          <div key={task.id} className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm">
+                          <div key={task.id} className="rounded-2xl border border-destructive/20 bg-destructive/10 p-4 text-sm backdrop-blur">
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <div className="font-semibold text-foreground">{task.name}</div>
                               <Badge variant="destructive">{statusLabels[task.status]}</Badge>
@@ -590,12 +590,12 @@ export const SeiTasksWorkspace = ({ session }: SeiTasksWorkspaceProps) => {
                   </CardHeader>
                   <CardContent className="space-y-3 text-sm">
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Criado em</div><div className="mt-1 font-medium text-foreground">{formatDateTime(selectedTask.createdAt)}</div></div>
-                      <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Atualizado em</div><div className="mt-1 font-medium text-foreground">{formatDateTime(selectedTask.updatedAt)}</div></div>
+                      <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Criado em</div><div className="mt-1 font-medium text-foreground">{formatDateTime(selectedTask.createdAt)}</div></div>
+                      <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Atualizado em</div><div className="mt-1 font-medium text-foreground">{formatDateTime(selectedTask.updatedAt)}</div></div>
                     </div>
-                    <div className="rounded-lg border border-border bg-background p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Campos opcionais</div><div className="mt-1 text-muted-foreground">Id Func.: {displayValue(selectedTask.functionalId)} • CPF: {displayValue(selectedTask.cpf)} • E-mail institucional: {displayValue(selectedTask.personalEmail)}</div></div>
+                    <div className="glass-card rounded-2xl p-3"><div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Campos opcionais</div><div className="mt-1 text-muted-foreground">Id Func.: {displayValue(selectedTask.functionalId)} • CPF: {displayValue(selectedTask.cpf)} • E-mail institucional: {displayValue(selectedTask.personalEmail)}</div></div>
                     {(selectedTask.validationErrors?.length ?? 0) > 0 ? (
-                      <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3">
+                      <div className="rounded-2xl border border-destructive/20 bg-destructive/10 p-3 backdrop-blur">
                         <div className="font-semibold text-foreground">Erros associados</div>
                         <ul className="mt-2 list-disc space-y-1 pl-5 text-destructive">
                           {(selectedTask.validationErrors ?? []).map((message, index) => <li key={`${selectedTask.id}-detail-${index}`}>{formatValidationError(message)}</li>)}

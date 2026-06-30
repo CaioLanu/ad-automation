@@ -5,8 +5,8 @@ type BadgeVariant = 'default' | 'secondary' | 'outline' | 'destructive' | 'brand
 
 const styles: Record<BadgeVariant, string> = {
   default: 'bg-primary/10 text-primary border border-primary/20',
-  secondary: 'bg-muted text-foreground border border-border',
-  outline: 'bg-background text-foreground border border-border',
+  secondary: 'bg-background/50 text-foreground border border-white/35 backdrop-blur',
+  outline: 'bg-background/35 text-foreground border border-white/35 backdrop-blur',
   destructive: 'bg-destructive/10 text-destructive border border-destructive/20',
   brand: 'bg-primary text-primary-foreground border border-primary',
   success: 'bg-success/15 text-success border border-success/20',

@@ -6,11 +6,11 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const cardVariants = {
-  default: 'overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm',
-  elevated: 'overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm',
+  default: 'glass-card rounded-[1.35rem] text-card-foreground',
+  elevated: 'glass-panel rounded-[1.75rem] text-card-foreground',
   interactive:
-    'overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-colors hover:border-primary/30',
-  panel: 'overflow-hidden rounded-lg border border-border bg-surface text-card-foreground shadow-sm',
+    'glass-card rounded-[1.35rem] text-card-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30',
+  panel: 'glass-card rounded-[1.35rem] text-card-foreground',
 } as const;
 
 export const Card = ({ className, variant = 'default', ...props }: CardProps) => (
@@ -24,7 +24,7 @@ export const Card = ({ className, variant = 'default', ...props }: CardProps) =>
 );
 
 export const CardHeader = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col gap-2 border-b border-border/70 bg-transparent p-5 sm:p-6', className)} {...props} />
+  <div className={cn('flex flex-col gap-2 border-b border-white/35 bg-transparent p-5 sm:p-6', className)} {...props} />
 );
 
 export const CardTitle = ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
@@ -40,5 +40,5 @@ export const CardContent = ({ className, ...props }: HTMLAttributes<HTMLDivEleme
 );
 
 export const CardFooter = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex items-center border-t border-border/70 p-5 pt-4 sm:p-6 sm:pt-5', className)} {...props} />
+  <div className={cn('flex items-center border-t border-white/35 p-5 pt-4 sm:p-6 sm:pt-5', className)} {...props} />
 );

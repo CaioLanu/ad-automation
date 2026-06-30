@@ -6,16 +6,16 @@ type ButtonSize = 'sm' | 'default' | 'lg' | 'icon';
 
 const variantStyles: Record<ButtonVariant, string> = {
   default:
-    'border border-primary bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:ring-primary/40',
+    'border border-primary/20 bg-gradient-to-r from-primary to-cyan-500 text-primary-foreground shadow-lg shadow-primary/15 hover:brightness-105 focus-visible:ring-primary/40',
   secondary:
-    'border border-border bg-muted text-foreground shadow-sm hover:bg-surface-subtle',
-  ghost: 'bg-transparent text-foreground hover:bg-muted',
+    'border border-white/35 bg-background/55 text-foreground shadow-sm backdrop-blur hover:bg-background/80',
+  ghost: 'bg-transparent text-foreground hover:bg-background/55',
   outline:
-    'border border-border bg-background text-foreground hover:bg-muted',
+    'border border-white/40 bg-background/50 text-foreground shadow-sm backdrop-blur hover:bg-background/78',
   destructive:
     'border border-destructive bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/40',
   command:
-    'border border-border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground',
+    'border border-white/40 bg-background/50 text-muted-foreground shadow-sm backdrop-blur hover:bg-background/78 hover:text-foreground',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

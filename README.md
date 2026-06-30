@@ -2,12 +2,10 @@
 
 O **AD Automation** é uma aplicação full-stack para apoiar rotinas administrativas que envolvem usuários, permissões e filas operacionais. A ideia do projeto é concentrar essas tarefas em um painel seguro, com autenticação, controle de acesso e registro das operações realizadas.
 
-<<<<<<< HEAD
 Nesta fase, o projeto trabalha com um **Active Directory fictício**, modelado em tabelas SQL. Ou seja: ele simula a gestão de usuários e grupos em banco de dados, sem integração direta com um domínio AD real.
-=======
+
 - `backend/`: API backend.
 - `frontend/`: front único da aplicação, em React 19 + Vite + TypeScript + Tailwind.
->>>>>>> b8238c6 (Alterações no frontend, estruturação do dashboard de importação dos usuários.)
 
 ## O que o projeto resolve
 

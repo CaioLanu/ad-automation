@@ -5,6 +5,8 @@ import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
 import { adUsersRouter } from './routes/ad-users.routes.js';
 import { seiTasksRouter } from './routes/sei-tasks.routes.js';
+import { reportsRouter } from './routes/reports.routes.js';
+import { biMovementsRouter } from './routes/bi-movements.routes.js';
 import { errorHandler } from './middleware/error-handler.middleware.js';
 
 export const app = express();
@@ -14,4 +16,6 @@ app.use(healthRouter);
 app.use('/auth', authRouter);
 app.use('/ad', adUsersRouter);
 app.use('/sei', seiTasksRouter);
+app.use('/reports', reportsRouter);
+app.use('/bi-movements', biMovementsRouter);
 app.use(errorHandler);

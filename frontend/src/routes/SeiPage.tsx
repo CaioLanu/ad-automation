@@ -10,7 +10,7 @@ export function SeiPage() {
         description="Replicação para o SEI após a conclusão das alterações no Active Directory."
       />
 
-      <Card className="border-border/80 shadow-none">
+      <Card>
         <CardHeader>
           <CardTitle>Replicação SEI</CardTitle>
           <CardDescription>Esta etapa será usada depois que os usuários forem enviados ou atualizados no AD.</CardDescription>

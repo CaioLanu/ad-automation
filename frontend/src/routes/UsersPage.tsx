@@ -153,7 +153,7 @@ export function UsersPage() {
         />
       ) : null}
 
-      <Card className="border-border/80 shadow-none">
+      <Card>
         <CardContent className="p-4">
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_auto]">
             <div className="relative">
@@ -163,7 +163,7 @@ export function UsersPage() {
             <select
               value={status}
               onChange={(event) => setStatus(event.target.value as typeof status)}
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground shadow-sm outline-none focus:ring-2 focus:ring-ring/20"
+              className="h-11 rounded-xl border border-white/40 bg-background/55 px-3 text-sm text-foreground shadow-sm backdrop-blur outline-none focus:ring-2 focus:ring-ring/20"
             >
               <option value="todos">Todos os status</option>
               <option value="ativos">Ativos</option>
@@ -176,10 +176,10 @@ export function UsersPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-border/80 shadow-none">
+      <Card>
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-lg border border-dashed border-border/80 bg-muted/30 px-4 py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-dashed border-white/45 bg-background/45 px-4 py-3 backdrop-blur">
               <FileSpreadsheet className="h-5 w-5 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-medium">Importar XLSX</div>
@@ -194,7 +194,7 @@ export function UsersPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-border/80 shadow-none">
+      <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>

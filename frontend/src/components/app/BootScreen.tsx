@@ -1,8 +1,8 @@
 export function BootScreen() {
   return (
-    <div className="grid min-h-screen place-items-center bg-background px-6 text-center">
-      <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 shadow-sm sm:p-10">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-md border border-border bg-primary text-primary-foreground shadow-sm">
+    <div className="app-glass-shell grid min-h-screen place-items-center px-6 text-center">
+      <div className="glass-panel w-full max-w-md rounded-[2rem] p-8 sm:p-10">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary text-primary-foreground shadow-lg shadow-primary/20">
           <div className="h-3 w-3 rounded-full bg-current" />
         </div>
         <p className="font-display text-xl text-foreground">Preparando a sessão…</p>

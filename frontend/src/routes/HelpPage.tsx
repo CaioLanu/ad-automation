@@ -1,5 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
-import { Building2, Database, FileBarChart, LayoutDashboard, ListChecks, RefreshCcw, Search, ShieldCheck, TableProperties, Upload, UserCog, Users } from 'lucide-react';
+import { type LucideIcon, Building2, Database, FileBarChart, LayoutDashboard, ListChecks, RefreshCcw, Search, ShieldCheck, TableProperties, Upload, UserCog, Users } from 'lucide-react';
 import { PageHeader } from '@/components/app/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth-context';
