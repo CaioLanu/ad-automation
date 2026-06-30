@@ -4,6 +4,7 @@ import { BootScreen } from '@/components/app/BootScreen';
 import { LoginScreen } from '@/components/auth/LoginScreen';
 import { useAuth } from '@/lib/auth-context';
 import { DashboardPage } from '@/routes/DashboardPage';
+import { HelpPage } from '@/routes/HelpPage';
 import { PermissionsPage } from '@/routes/PermissionsPage';
 import { QueuesPage } from '@/routes/QueuesPage';
 import { ReportsPage } from '@/routes/ReportsPage';
@@ -35,8 +36,8 @@ function ProtectedAppRoute() {
 
 function NotFoundRoute() {
   return (
-    <div className="grid min-h-screen place-items-center bg-background px-6 text-center">
-      <div className="max-w-md rounded-lg border border-border bg-card p-8 shadow-sm">
+    <div className="app-glass-shell grid min-h-screen place-items-center px-6 text-center">
+      <div className="glass-panel max-w-md rounded-[2rem] p-8">
         <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">404</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-foreground">Página não encontrada</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">A rota solicitada não existe no painel administrativo.</p>
@@ -107,9 +108,15 @@ const settingsRoute = createRoute({
   component: SettingsPage,
 });
 
+const helpRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: 'ajuda',
+  component: HelpPage,
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
-  appRoute.addChildren([dashboardRoute, usersRoute, permissionsRoute, queuesRoute, seiRoute, reportsRoute, settingsRoute]),
+  appRoute.addChildren([dashboardRoute, usersRoute, permissionsRoute, queuesRoute, seiRoute, reportsRoute, settingsRoute, helpRoute]),
 ]);
 
 export const router = createRouter({ routeTree });
